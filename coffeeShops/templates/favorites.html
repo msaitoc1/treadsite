@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+<!-- this is the favorites page. It is identical to the home page in style and content,
+ but I don't know how to link them together right now so changes in one are not reflected in the other.-->
+{% block style %}
+    <style>
+        .coffee-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .coffee-card {
+            width: 250px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            background-color: #fdfdfd;
+            margin-bottom: 20px;
+        }
+        .coffee-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        /*Styling for the title */
+        .coffee-card h3 {
+            font-size: 18px;
+            margin: 10px 0;
+            color: #333;
+        }
+        /*Styling for the description */
+        .coffee-card p {
+            font-size: 14px;
+            color: #666;
+            padding: 0 10px 10px;
+        }
+
+        .scroll-container {
+            max-height: 80vh; /*Make it responsive */
+            overflow-y: auto; /* Enables scrolling */
+            padding: 20px;
+        }
+        .title {
+            text-align: center;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="title">
+        <h1>Your Favorite Coffee Shops</h1>
+    </div>
+    <div class="scroll-container">
+        <div class="coffee-container">
+            {% for coffeeShop in coffeeShops %}
+                <div class="coffee-card">
+                    <a href="{% url 'coffeeShop_detail' coffeeShop.pk %}">
+                        <img src="{{ coffeeShop.coverPhoto.url }}" alt="{{ coffeeShop.name }}">
+                        <h3>{{ coffeeShop.name }}</h3>
+                        <p>{{ coffeeShop.desct|truncatewords:20}}</p>
+                    </a>
+                </div>
+            {% empty %}
+                <li>You have no favorited coffee shops yet.</li>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

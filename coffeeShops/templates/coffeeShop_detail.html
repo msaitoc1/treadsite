@@ -1,0 +1,282 @@
+<!--this is a coffeeshop specific website template-->
+    {% extends 'base.html' %}
+    {% load static %}
+    {% block title %} {{ coffeeShop.name }} {% endblock%}
+    {% block style %}
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+        }
+        .left-side {
+            flex: 1;
+        }
+        .coffee-shop-img-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .coffee-shop-img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .favorite-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            z-index: 10;
+        }
+        .events-section {
+            margin-top: 20px;
+        }
+        .events-section h3 {
+            font-size: 1.5em;
+            color: #ff6347;
+            margin-bottom: 10px;
+        }
+        .events-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .events-section ul li {
+            background: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .right-side {
+            flex: 1;
+            padding: 20px;
+            background-color: #f3f3f3;
+            border-radius: 10px;
+        }
+        .right-side h2{
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+        .right-side p {
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+        .stats-container {
+            max-width: 500px;
+            margin: 20px auto;
+            text-align: left;
+        }
+
+        .stats-title {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        .stat-bar{
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+
+        }
+        .stat-icon {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .stats-icon {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        .progress {
+            flex-grow: 1;
+            background-color: #A9A9A9;
+            border-radius: 25px;
+            overflow: hidden;
+            position: relative;
+            height: 30px;
+        }
+
+        .progress-bar {
+            background-color: #4caf50;
+            height:100%;
+            text-align: right;
+            padding-right: 10px;
+            line-height: 30px;
+            color: white;
+            font-weight: bold;
+            border-radius: 25px 0 0 25px;
+            transition: width 0.5 ease;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <!-- I don't know what this does, but it's for favorites-->
+    <form method="post">
+        {% csrf_token %}
+    </form>
+
+    <!--Site content-->
+    <div class = "container">
+        <div class="left-side">
+            <div class="coffee-shop-header">
+                <!-- this is the coffeeshop title photo-->
+                <div class="coffee-shop-img-container">
+                    <img src="{{ coffeeShop.coverPhoto.url }}" alt="{{coffeeShop.name}}" class="coffee-shop-img">
+                
+                    <!-- this is the favorites icon, changes from not favorite to favorite based on whether the
+                    button has been clicked before. Currently, the change is based off of names. This should be
+                    changed later to be based off of unique ids. -->     
+                        <img 
+                            src="{% if favorited %}{% static 'fav_icons/fav.png' %}{% else %}{% static 'fav_icons/not_fav.png' %}{% endif %}"
+                            alt="Favorite Icon"
+                            class="favorite-icon"
+                            id="favorite-icon-{{ coffeeShop.pk }}"
+                            onclick="toggleFavorite({{ coffeeShop.pk }}, '{{ favorited|yesno:"true,false" }}')"
+                        />
+
+                </div>
+            </div>
+
+            <!-- this is coffeesshop events-->
+            <div class="events-section">
+                <h3>Upcoming Events</h3>
+                {% if events %}
+                <ul>
+                    {% for event in events %}
+                    <li>
+                        <strong>{{ event.title }}</strong><br>
+                        <small>{{ event.date }} at {{event.time }}</small><br>
+                        <p>{{ event.desc }}</p>
+                        {% if event.admission_cost %}
+                        <p>Admission: ${{ event.admission_cost }}</p>
+                        {% else %}
+                            <p> Free Admission</p>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                    <p>No upcoming events at this coffee shop.</p>
+                {% endif %}
+            </div>
+        </div>
+
+
+        <div class="right-side">
+            <h1>{{ coffeeShop.name }}</h1>
+        <!-- This is where each coffee stat is displayed with an  to represent
+        category, a title, and a percent bar. No  urls are currently added.-->
+             <!--Bookworm Score Bar-->
+            <div class="stats-container">
+                <h3 class="stat-title"> Bookworm Score</h3>
+                <div class="stat-bar">
+                    <div class="stat-icon">
+                        <img src="{% static 'stat_icons/bkwrm.png'%}" alt="" class= "stats-icon">
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar" style="width: {{ coffeeShop.CoffeeStats.bkwrm_val }}%">
+                            {{ cofeeShop.CoffeeStats.bkwrm_val }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Adventurer Score Bar-->
+            <div class="stats-container">
+                <h3 class="stat-title"> Adventurer Score</h3>
+                <div class="stat-bar">
+                    <div class="stat-icon">
+                        <img src="{% static 'stat_icons/adv.png'%}" alt="" class= "stats-icon">
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar" style="width: {{ coffeeShop.CoffeeStats.adv_val }}%">
+                            {{ coffeeShop.CoffeeStats.adv_val }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Average Joe Score Bar-->
+            <div class="stats-container">
+                <h3 class="stat-title"> Average Joe Score</h3>
+                <div class="stat-bar">
+                    <div class="stat-icon">
+                        <img src="{% static 'stat_icons/avg.png'%}" alt="" class= "stats-icon">
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar" style="width: {{ coffeeShop.CoffeeStats.avgj_val }}%">
+                            {{ coffeeShop.CoffeeStats.avgj_val }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Accessibility Score Bar-->
+            <div class="stats-container">
+                <h3 class="stat-title"> Accessibility Score</h3>
+                <div class="stat-bar">
+                    <div class="stat-icon">
+                        <img src="{% static 'stat_icons/acc.png'%}" alt="" class= "stats-icon">
+                    </div>
+                        <div class="progress">
+                        <div class="progress-bar" style="width: {{ coffeeShop.CoffeeStats.acc_val }}%">
+                            {{ coffeeShop.CoffeeStats.acc_val }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--this is general coffeeshop information-->
+
+            <h2> About {{ coffeeShop.name }}</h2>
+            <p>{{ coffeeShop.desc }}</p>
+
+            <h3>Location</h3>
+            <p>{{ coffeeShop.location }}</p>
+
+            <h3>Hours</h3>
+            <p>{{ coffeeShop.hours }}</p>
+        </div>
+        <script>
+            function toggleFavorite(coffeeShopId) {     
+                fetch(`/toggle-favorite/${coffeeShopId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                })
+                .then(response => {
+                    if(!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Favorite status updated" );
+                    const favoriteIcon = document.getElementById(`favorite-icon-${coffeeShopId}`);
+
+                    if (data.favorited) {
+                        favoriteIcon.src = "{% static 'fav_icons/fav.png' %}";
+                    } else {
+                        favoriteIcon.src = "{% static 'fav_icons/not_fav.png' %}";
+                    }
+
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }           
+    
+        </script>
+    </div>
+{% endblock %}
+

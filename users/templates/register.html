@@ -1,0 +1,16 @@
+<!--Here is a registration page I copied directly from chatgpt. It takes a username and email.-->
+{% extends 'base1.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+    <h2>Register</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Render the form fields -->
+        <button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+
+{% endblock %}
+        
