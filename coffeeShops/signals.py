@@ -4,6 +4,10 @@ from .models import coffeeShop, coffeeShopSearchDoc
 
 @receiver(post_save, sender=coffeeShop)
 def create_or_update_search_doc(sender, instance, created, **kwargs):
+    """
+    Updates the corresponding coffeeSearchDoc whenever a coffeeShop instance
+    is saved. 
+    """
     if created:
         coffeeShopSearchDoc.objects.create(coffee_shop=instance)
         print(f"Created coffeeShopSearchDoc for {instance.name}")

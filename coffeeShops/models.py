@@ -34,7 +34,7 @@ class coffeeShop(models.Model):
     
     def get_total_words(self):
         """
-        returns the number of words (not unique) in the description and name
+        returns the number of words (not unique) in the description and name.
         """
         return len(self.name.split()) + len(self.desc.split())
 
@@ -46,7 +46,11 @@ class coffeeShopSearchDoc(models.Model):
     """
     Stores relevant information from each coffee shop for search functionality.
     All words are cleaned to be non case sensitive and non-alphanumeric chars are
-    removed. wInTitle is a dict of the words, and the frequency of the word.
+    removed. 
+    coffee_shop: coffeeShop model linked to this Searchdoc
+    freqs: dictionary containing all unique cleaned words from a coffeeShop's name and desc, 
+    and their frequencies as a percent of total words.
+    wordTotal: the total number of words (non unique) in a coffeeShop's name and desc.
     """  
     
     coffee_shop = models.OneToOneField('coffeeShop', on_delete=models.CASCADE, related_name='SearchDoc')
@@ -69,6 +73,10 @@ class coffeeShopSearchDoc(models.Model):
         self.updateGlobalInvertedIndex()
     
     def updateGlobalInvertedIndex(self):
+        """
+        updates the global inverted index with information from new coffeeshops.
+        CHECK: Does this work if a coffeeshop is updated?
+        """
         #print(f"Updating inverted index for: {self.coffee_shop.name}")
         for word in self.freqs.keys():
             entry, created = GlobalInvertedIndex.objects.get_or_create(term=word)
@@ -81,7 +89,7 @@ class coffeeShopSearchDoc(models.Model):
     def save(self, *args, **kwargs):
         """
         overrides the model save so that freqs and wordTotal are
-        always updated firstw
+        always updated first
         """
         #print(f"Saving coffeeShopSearchDoc for: {self.coffee_shop.name}")
         self.wordFreqs()
@@ -101,7 +109,7 @@ class coffeeShopSearchDoc(models.Model):
 
     def get_words(self):
         """
-        gets the set of all words present in the coffee Shop title
+        gets the set of all words present in the coffee Shop title and desc.
         """
         return set(self.freqs.keys())
 
@@ -112,6 +120,8 @@ class coffeeShopSearchDoc(models.Model):
 class GlobalInvertedIndex(models.Model):
     """
     an inverted index containing entries for all coffeeShops.
+    term: cleaned word 
+    coffee_shop_ids: list of coffeeShops with that word 
     """
     
     term = models.CharField(max_length = 255, unique=True)
@@ -125,6 +135,14 @@ class GlobalInvertedIndex(models.Model):
 #Event information. Each event is linked to one coffee shop. 
 # Includes name, description, date, time, and admission cost.
 class Event(models.Model):
+    """
+    coffee_shop: coffeeShop hosting the event
+    title: name of the event 
+    desc: description of the event
+    date: date the event takes place
+    time: time of the event
+    admission_cost: optional, cost of the event
+    """
     coffee_shop = models.ForeignKey(coffeeShop, on_delete=models.CASCADE, related_name="events")
     title = models.CharField(max_length=255)
     desc = models.TextField()

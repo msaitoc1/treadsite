@@ -4,13 +4,15 @@ from .models import coffeeShop, Event, stat, GlobalInvertedIndex, coffeeShopSear
 from django.contrib.postgres.search import SearchVector
 import math
 
-#gets coffeeshop list for the home page of the site
+
 def home(request):
+    #gets coffeeshop list for the home page of the site
     items = coffeeShop.objects.all()
     return render(request, 'home.html', {'coffeeShops': items})
 
-#gets a coffeeshop's information for a coffeeshop's detail site.
+
 def coffeeShop_detail(request, pk):
+    #gets a coffeeshop's information for a coffeeshop's detail site.
     coffee_shop = get_object_or_404(coffeeShop, pk=pk)
     events=  Event.objects.filter(coffee_shop_id=pk)
     coffeeStats = stat.objects.all()
@@ -20,8 +22,9 @@ def coffeeShop_detail(request, pk):
                                                       'coffeestats': coffeeStats,
                                                       'favorited': favorited})
 
-#gets favorited shops for a user's favorites page
+
 def favorites(request): 
+    #gets favorited shops for a user's favorites page
     favorited_shops = request.user.favorite_coffee_shops.all()
     return render(request, 'favorites.html', {'coffeeShops': favorited_shops})
 
@@ -35,6 +38,7 @@ def calculate_idf(term):
         return 0
     else:
         return math.log(float(total_shops) / containing_shops)
+
 def search_coffee_shops(query):
     """
     search coffee shops using search query based on TF-IDF
@@ -70,8 +74,9 @@ def search(request):
     return render(request, 'search_results.html', {'coffee_shops': coffee_shops})
     
 
-# Toggles favorite status based on primary key(pk)
+
 def toggleFavorite(request, pk):
+    # Toggles favorite status based on primary key(pk)
     coffee_shop = coffeeShop.objects.get(pk=pk)
 
     if coffee_shop.favorited_by.filter(id=request.user.id).exists():

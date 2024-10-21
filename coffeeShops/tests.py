@@ -15,8 +15,6 @@ class coffeeShopModel(TestCase):
         )
       
     
-    
-
     def test_clean_word(self):
       word = "Coffee!"
       word2 = "Coffee2!"

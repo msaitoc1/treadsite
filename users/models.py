@@ -4,6 +4,9 @@ from django.utils.translation import gettext_lazy as _
 from .managers import CustomUserManager
 
 class CustomUser(AbstractUser):
+    """
+    Custom user model where there is only an email and no username.
+    """
     username = None
     email = models.EmailField(_("email address"), unique=True)
 
@@ -15,4 +18,4 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.email
     
-# Create your models here.
+

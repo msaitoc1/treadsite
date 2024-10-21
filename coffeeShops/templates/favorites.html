@@ -1,14 +1,16 @@
 {% extends 'base.html' %}
-<!-- this is the favorites page. It is identical to the home page in style and content,
- but I don't know how to link them together right now so changes in one are not reflected in the other.-->
+<!-- this is the favorites page. It displays the favorited shops by users 
+    TODO: Connect css for home page to this-->
 {% block style %}
     <style>
+        <!-- Container for coffee shop profiles -->
         .coffee-container {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
             justify-content: center;
         }
+        <!-- Coffee shop profile card-->
         .coffee-card {
             width: 250px;
             border: 1px solid #ddd;
@@ -19,12 +21,13 @@
             background-color: #fdfdfd;
             margin-bottom: 20px;
         }
+        <!-- Styling for the profile photo of a coffeeShop-->
         .coffee-card img {
             width: 100%;
             height: 150px;
             object-fit: cover;
         }
-        /*Styling for the title */
+        /*Styling for the title of a coffee shop */
         .coffee-card h3 {
             font-size: 18px;
             margin: 10px 0;
@@ -36,12 +39,13 @@
             color: #666;
             padding: 0 10px 10px;
         }
-
+        /* Enable scrolling for coffee shops */
         .scroll-container {
-            max-height: 80vh; /*Make it responsive */
-            overflow-y: auto; /* Enables scrolling */
+            max-height: 80vh; 
+            overflow-y: auto; 
             padding: 20px;
         }
+        /* Styling for the title of the page */
         .title {
             text-align: center;
         }
@@ -49,9 +53,11 @@
 {% endblock %}
 
 {% block content %}
+    <!-- Title of Favorites page-->
     <div class="title">
         <h1>Your Favorite Coffee Shops</h1>
     </div>
+    <!-- Scrolling container of all the favorited shops -->
     <div class="scroll-container">
         <div class="coffee-container">
             {% for coffeeShop in coffeeShops %}
@@ -63,6 +69,7 @@
                     </a>
                 </div>
             {% empty %}
+                <!-- Displays this message if there are no coffee shops favorited-->
                 <li>You have no favorited coffee shops yet.</li>
             {% endfor %}
         </div>

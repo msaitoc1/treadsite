@@ -2,8 +2,13 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 
 class UserManagersTests(TestCase):
-
+    """
+    Tests for user creation
+    """
     def test_create_user(self):
+        """
+        Tests creating a regular user
+        """
         User = get_user_model()
         user = User.objects.create_user(email="normal@user.com", password ="foo")
         self.assertEqual(user.email, "normal@user.com")
@@ -21,6 +26,9 @@ class UserManagersTests(TestCase):
         with self.assertRaises(ValueError):
             User.objects.create_user(email="", password= "foo")
     def test_create_superuser(self):
+        """
+        Tests creating a superuser
+        """
         User = get_user_model()
         admin_user = User.objects.create_superuser(email="super@user.com", password="foo")
         self.assertEqual(admin_user.email, "super@user.com")

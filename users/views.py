@@ -4,6 +4,9 @@ from django.contrib.auth.decorators import login_required
 
 
 def register(request):
+    """
+    gets the register form for the register
+    """
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():

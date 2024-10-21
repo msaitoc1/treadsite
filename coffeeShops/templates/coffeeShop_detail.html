@@ -1,9 +1,12 @@
-<!--this is a coffeeshop specific website template-->
+<!--this is a coffeeshop detail page. It has the same navigation bar.-->
     {% extends 'base.html' %}
+    <!-- Load django static files -->  
     {% load static %}
+    <!-- Title of page is the Coffee Shop's name-->
     {% block title %} {{ coffeeShop.name }} {% endblock%}
     {% block style %}
     <style>
+        /* General detail page styling */
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -11,21 +14,24 @@
             display: flex;
             gap: 20px;
         }
+        /* Left side of page, which contains image and events section*/
         .left-side {
             flex: 1;
         }
+        /* Style of the profile photo */
         .coffee-shop-img-container {
             position: relative;
             display: inline-block;
         }
-
+        /* Image styling for the profile photo*/
         .coffee-shop-img {
             width: 100%;
             height: auto;
             border-radius: 10px;
             margin-bottom: 20px;
         }
-        
+        /* Style for the favorite icon,
+         placed at the top-right corner of the coffeeShop image*/
         .favorite-icon {
             position: absolute;
             top: 10px;
@@ -35,48 +41,58 @@
             cursor: pointer;
             z-index: 10;
         }
+        /* Section for displaying the upcoming events for the coffee Shop */
         .events-section {
             margin-top: 20px;
         }
+        /* Event section heading */
         .events-section h3 {
             font-size: 1.5em;
             color: #ff6347;
             margin-bottom: 10px;
         }
+        /* Remove list-style from the event list and add padding to event items*/
         .events-section ul {
             list-style: none;
             padding: 0;
         }
+        /* Style for each individual event */
         .events-section ul li {
             background: #f9f9f9;
             margin-bottom: 10px;
             padding: 10px;
             border-radius: 5px;
         }
+        /* Right side of the page, which includes coffee Shop statistics 
+        and general information.*/
         .right-side {
             flex: 1;
             padding: 20px;
             background-color: #f3f3f3;
             border-radius: 10px;
         }
+        /* Heading for the right side section (the coffee shop name)*/
         .right-side h2{
             font-size: 2em;
             margin-bottom: 15px;
         }
+        /* General paragraph styling for coffee Shop description*/ 
         .right-side p {
             font-size: 1.2em;
             line-height: 1.6;
         }
+        /* container for the coffee shop stats bars.*/
         .stats-container {
             max-width: 500px;
             margin: 20px auto;
             text-align: left;
         }
-
+        /* Styling for each stat title (e.g bookworm score)*/
         .stats-title {
             font-size: 1.5em;
             margin-bottom: 10px;
         }
+        /* Style for the stat bar wrapper including icon and progress bar*/
         .stat-bar{
             display: flex;
             align-items: center;
@@ -84,6 +100,7 @@
             margin-bottom: 20px;
 
         }
+        /* Style for the stat icons representing each category*/
         .stat-icon {
             width: 30px;
             height: 30px;
@@ -95,6 +112,7 @@
             max-width: 100%;
             max-height: 100%;
         }
+        /* Background color and layout for the stat bars */
         .progress {
             flex-grow: 1;
             background-color: #A9A9A9;
@@ -103,7 +121,7 @@
             position: relative;
             height: 30px;
         }
-
+        /* Progress bar styling with width based on dynamic value */
         .progress-bar {
             background-color: #4caf50;
             height:100%;
@@ -119,22 +137,19 @@
 {% endblock %}
 
 {% block content %}
-    <!-- I don't know what this does, but it's for favorites-->
+    <!-- Form to handle CSRF tokens and toggle favorites -->
     <form method="post">
         {% csrf_token %}
     </form>
-
-    <!--Site content-->
+    <!-- Main content container for coffee Shop details page -->
     <div class = "container">
         <div class="left-side">
             <div class="coffee-shop-header">
-                <!-- this is the coffeeshop title photo-->
+                <!-- Display the coffeeshop cover photo-->
                 <div class="coffee-shop-img-container">
                     <img src="{{ coffeeShop.coverPhoto.url }}" alt="{{coffeeShop.name}}" class="coffee-shop-img">
                 
-                    <!-- this is the favorites icon, changes from not favorite to favorite based on whether the
-                    button has been clicked before. Currently, the change is based off of names. This should be
-                    changed later to be based off of unique ids. -->     
+                    <!-- Favorite icon, toggles between favorited and not favorited based on user's click. -->     
                         <img 
                             src="{% if favorited %}{% static 'fav_icons/fav.png' %}{% else %}{% static 'fav_icons/not_fav.png' %}{% endif %}"
                             alt="Favorite Icon"
@@ -146,7 +161,7 @@
                 </div>
             </div>
 
-            <!-- this is coffeesshop events-->
+            <!-- Section for displaying upcoming events related to this coffee shop -->
             <div class="events-section">
                 <h3>Upcoming Events</h3>
                 {% if events %}
@@ -165,6 +180,7 @@
                     {% endfor %}
                 </ul>
                 {% else %}
+                    <!-- Display this message if no events are available -->
                     <p>No upcoming events at this coffee shop.</p>
                 {% endif %}
             </div>
@@ -172,9 +188,8 @@
 
 
         <div class="right-side">
+            <!-- Display coffee shop's name -->
             <h1>{{ coffeeShop.name }}</h1>
-        <!-- This is where each coffee stat is displayed with an  to represent
-        category, a title, and a percent bar. No  urls are currently added.-->
              <!--Bookworm Score Bar-->
             <div class="stats-container">
                 <h3 class="stat-title"> Bookworm Score</h3>
@@ -245,8 +260,10 @@
             <h3>Hours</h3>
             <p>{{ coffeeShop.hours }}</p>
         </div>
+        <!-- Script for toggling the favorite status of a coffee shop -->
         <script>
             function toggleFavorite(coffeeShopId) {     
+                // Sends a request to toggle the favorite status of the coffee shop with the given ID
                 fetch(`/toggle-favorite/${coffeeShopId}/`, {
                     method: 'POST',
                     headers: {
