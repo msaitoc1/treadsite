@@ -33,7 +33,7 @@ SECRET_KEY = 'django-insecure-6)-!7q*gi16y!l#!sh%1ihjayizq$3cc_0t)_%_#l=5j4!691f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['treadsite.onrender.com']
 
 
 # Application definition
