@@ -11,6 +11,13 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
+
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -79,11 +86,12 @@ WSGI_APPLICATION = 'treadSite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'treadsite',
-        'USER': 'postgres',
-        'PASSWORD': 'ILOVETREAD!',            # Password for the PostgreSQL user
-        'HOST': 'localhost',                       # Typically 'localhost' if running locally
-        'PORT': '5432', 
+        #'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),             #Password for the PostgreSQL user
+        'HOST': env('DB_HOST'),                        #Typically 'localhost' if running locally
+        'PORT': env('DB_PORT'), 
     }
 }
 
